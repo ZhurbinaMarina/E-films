@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="navbar navbar-light bg-light">
+    <form class="form-inline">
+        <input name="input_search" class="form-control mr-sm-2" type="search" placeholder="Поиск фильма" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>
+    </form>
+</nav>
+{% if search_on %}
+    {% for movie in movies%}
+        {% for elem in select_fields%}
+            <div class="col-md6 border rounded">
+                <h2>{{elem}} {{movie.get(elem, "EROOR")}}</h2>
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endif %}
+
+{% endblock %}
