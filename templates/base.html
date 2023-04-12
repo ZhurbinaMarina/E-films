@@ -1,41 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="stylesheet"
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet"
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
           crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="{{ css_file }}"/>
-        <title>{{title}}</title>
-    </head>
-    <body>
-        <header>
-            <nav class="navbar navbar-light bg-light">
+    <link rel="stylesheet" type="text/css" href="{{ css_file }}"/>
+    <title>{{title}}</title>
+</head>
+<body>
+
+<div class="container">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between
+    py-3 mb-4 border-bottom">
+        <a href="/" class="navbar-brand" style="color: black;">
+            <img src="/static/img/cat.svg" class="bi me-2" width="40" height="40" role="img" aria-label="Bootstrap" alt="">
+                E-films
+        </a>
+        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a href="/" class="navbar-brand" style="color: black;">Главная</a>
+            </li>
+            <li>
+                <a href="/search_movie" class="navbar-brand" style="color: black;">Поиск фильмов</a>
+            </li>
+<!--            <li>-->
+<!--                <a href="#" class="nav-link px-2 link-dark">Функции</a>-->
+<!--            </li>-->
             {% if current_user.is_authenticated %}
-                <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
-            {% else %}
-                    <a class="nav-link" href="/register">Зарегистрироваться</a>
-                    <a class="nav-link" href="/search_movie">Поиск фильмов</a>
-                    <a class="btn btn-primary" href="/register">Зарегистрироваться</a>
-                    <a class="btn btn-success" href="/login">Войти</a>
+            <li>
+                <a class="nav-link" style="color: black;" href="/logout">{{ current_user.name }}</a>
+            </li>
             {% endif %}
-            </nav>
-        </header>
-        <!-- Begin page content -->
-        <main role="main" class="container">
-            {% block content %}{% endblock %}
-        </main>
-        <footer class="bg-light text-center text-lg-start" style="background-color: #e2f7df;">
-            <!-- Copyright -->
-            <div class="spinner-grow text-info" style="background-color: #e2f7df;" role="status">
-                <span class="visually-hidden"></span>
-            </div>
-            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.15);">
-                © 2023 Copyright: А и Б
-            </div>
-            <!-- Copyright -->
-        </footer>
-    </body>
+        </ul>
+        <div class="col-md-3 text-end">
+            <a class="btn btn-outline-primary me-2" href="/login">Войти</a>
+            <a class="btn btn-primary" href="/register">Зарегистрироваться</a>
+        </div>
+    </header>
+</div>
+<!--<header>-->
+<!--    <nav class="navbar navbar-light bg-light">-->
+<!--        {% if current_user.is_authenticated %}-->
+<!--        <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>-->
+<!--        {% else %}-->
+<!--        <a class="nav-link" href="/register">Зарегистрироваться</a>-->
+<!--        <a class="nav-link" href="/search_movie">Поиск фильмов</a>-->
+<!--        <a class="btn btn-primary" href="/register">Зарегистрироваться</a>-->
+<!--        <a class="btn btn-success" href="/login">Войти</a>-->
+<!--        {% endif %}-->
+<!--    </nav>-->
+<!--</header>-->
+<!-- Begin page content -->
+<main role="main" class="container">
+    {% block content %}{% endblock %}
+</main>
+<footer class="bg-light text-center text-lg-start" style="background-color: #e2f7df;">
+    <!-- Copyright -->
+    <div class="spinner-grow text-info" style="background-color: #e2f7df;" role="status">
+        <span class="visually-hidden"></span>
+    </div>
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.15);">
+        © 2023 Copyright: А и Б
+    </div>
+    <!-- Copyright -->
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+</body>
 </html>

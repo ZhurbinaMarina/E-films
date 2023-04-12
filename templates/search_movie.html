@@ -3,18 +3,81 @@
 {% block content %}
 <nav class="navbar navbar-light bg-light">
     <form class="form-inline">
-        <input name="input_search" class="form-control mr-sm-2" type="search" placeholder="Поиск фильма" aria-label="Search">
+        <input name="input_search" class="form-control mr-sm-2" type="search" placeholder="Поиск фильма"
+               aria-label="Search">
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>
     </form>
 </nav>
 {% if search_on %}
-    {% for movie in movies%}
-        {% for elem in select_fields%}
-            <div class="col-md6 border rounded">
-                <h2>{{elem}} {{movie.get(elem, "EROOR")}}</h2>
-            </div>
-        {% endfor %}
-    {% endfor %}
+{% for movie in movies%}
+<div class="col-md6 border rounded">
+<!--    <h2 style="vertical-align: text-top;">-->
+<!--        {% if movie.get('poster', "ERROR") != "ERROR" %}-->
+<!--            <img src="{{movie['poster']['url']}}"-->
+<!--         alt="Постер фильма {{movie['name']}}" width="200" height="300">-->
+<!--        {% endif %}-->
+<!--        {{movie['name']}}-->
+<!--    </h2>-->
+    {% if movie.get('poster', "ERROR") != "ERROR" %}
+        <img src="{{movie['poster']['url']}}"
+     alt="Постер фильма {{movie['name']}}" width="300" height="450">
+    {% endif %}
+    {% if movie.get('video', "ERROR") != "ERROR" %}
+        <video
+          controls
+          src="{{movie['video']['url']}}"
+          poster="https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217"
+          width="620">
+          Sorry, your browser doesn't support embedded videos, but don't worry, you can
+          <a href="https://archive.org/details/BigBuckBunny_124">download it</a>
+          and watch it with your favorite video player!
+        </video>
+    {% endif %}
+    <h2>{{movie['name']}}</h2>
+    <h3>ID: {{movie.get('id', "None")}}   Рейтинг КП: {{movie['rating']['kp']}}   Рейтинг IMDB:
+        {{movie['rating']['imdb']}}</h3>
+    {% if movie.get('year', "ERROR") != "ERROR" %}
+        <div class="alert alert-success" role="alert">
+            Год: {{movie['year']}}
+        </div>
+    {% endif %}
+    {% if movie.get('slogan', "ERROR") != "ERROR" %}
+        <div class="alert alert-success" role="alert">
+            Слоган: {{movie['slogan']}}
+        </div>
+    {% endif %}
+    {% if movie.get('persones', "ERROR") != "ERROR" %}
+        <div class="alert alert-success" role="alert">
+            Актеры: {{movie['persones']}}
+        </div>
+    {% endif %}
+    {% if movie.get('genres', "ERROR") != "ERROR" %}
+        <div class="alert alert-success" role="alert">
+            Жанры: {{movie['genres']}}
+        </div>
+    {% endif %}
+    {% if movie.get('countries', "ERROR") != "ERROR" %}
+        <div class="alert alert-success" role="alert">
+            Страны: {{movie['countries']}}
+        </div>
+    {% endif %}
+    {% if movie.get('fees', "ERROR") != "ERROR" %}
+        <div class="alert alert-success" role="alert">
+            Сборы в мире: {{movie['fees']}}
+        </div>
+    {% endif %}
+    {% if movie.get('releaseYears', "ERROR") != "ERROR" %}
+        <div class="alert alert-success" role="alert">
+            Премьера в мире: {{movie['releaseYears']['start']}}
+        </div>
+    {% endif %}
+    {% if movie.get('description', "ERROR") != "ERROR" %}
+    <p>
+        {{movie['description']}}
+    </p>
+    {% endif %}
+</div>
+{% endfor %}
 {% endif %}
 
 {% endblock %}

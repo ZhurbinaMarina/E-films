@@ -143,10 +143,8 @@ def reviews_delete(id):
 def search_movie():
     movie_form = SearchMovieForm()
     search_on = False
-    select_fields = ['name', 'id', 'rating', 'year', 'slogan', 'genres', 'description',
-                    'status', 'votes', 'logo', 'poster', 'genres',
-                    'persones',
-                    'reviewInfo', 'facts']
+    select_fields = ['name', 'id', 'rating', 'year', 'slogan', 'persones', 'genres', 'fees', 'premiere', 'description',
+                    'logo', 'poster', 'video', 'releaseYears']
     movies = []
     if request.method == 'GET':
         if request.args.getlist('input_search') != []:
@@ -155,7 +153,9 @@ def search_movie():
             if name_film != '':
                 print(request.args.getlist('input_search')[0])
                 movies = search_movie_api(name_film)
-                print(movies)
+                for movie in movies:
+                    for elem in movie.keys():
+                        print(f'{elem}: {movie[elem]}')
     return render_template('search_movie.html', title='Поиск фильмов', movie_form=movie_form, search_on=search_on,
                            select_fields=select_fields, movies=movies)
 
@@ -165,6 +165,21 @@ def search_movie_api(name_movie):
     file = requests.get(
             f"https://api.kinopoisk.dev/v1/movie?token={TOKEN}&name={name_movie}").json()
     movies = file['docs']
+    for movie in movies:
+        if 'genres' in movie.keys():
+            genres = movie['genres']
+            edited_genres = []
+            for elem in genres:
+                edited_genres.append(elem['name'])
+            edited_genres = ', '.join(edited_genres)
+            movie['genres'] = edited_genres
+        if 'countries' in movie.keys():
+            countries = movie['countries']
+            edited_countries = []
+            for elem in countries:
+                edited_countries.append(elem['name'])
+            edited_countries = ', '.join(edited_countries)
+            movie['countries'] = edited_countries
     return movies
 
 
