@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    {% if movie.get('poster', "ERROR") != "ERROR" %}
+        <img src="{{movie['poster']['url']}}"
+     alt="Постер фильма {{movie['name']}}" width="300" height="450">
+    {% endif %}
+    {% if movie.get('video', "ERROR") != "ERROR" %}
+        <video
+          controls
+          src="{{movie['video']['url']}}"
+          poster="https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217"
+          width="620">
+          Sorry, your browser doesn't support embedded videos, but don't worry, you can
+          <a href="https://archive.org/details/BigBuckBunny_124">download it</a>
+          and watch it with your favorite video player!
+        </video>
+    {% endif %}
+    <h1>{{movie['name']}}</h1>
+    <h2>ID: {{movie.get('id', "None")}}   Рейтинг КП: {{movie['rating']['kp']}}   Рейтинг IMDB:
+        {{movie['rating']['imdb']}}</h2>
+    {% if movie.get('year', "ERROR") != "ERROR" %}
+        <div class="alert alert-success" role="alert">
+            Год: {{movie['year']}}
+        </div>
+    {% endif %}
+    {% if movie.get('slogan', "ERROR") != "ERROR" %}
+        <div class="alert alert-success" role="alert">
+            Слоган: {{movie['slogan']}}
+        </div>
+    {% endif %}
+    {% if movie.get('persones', "ERROR") != "ERROR" %}
+        <div class="alert alert-success" role="alert">
+            Актеры: {{movie['persones']}}
+        </div>
+    {% endif %}
+    {% if movie.get('genres', "ERROR") != "ERROR" %}
+        <div class="alert alert-success" role="alert">
+            Жанры: {{movie['genres']}}
+        </div>
+    {% endif %}
+    {% if movie.get('countries', "ERROR") != "ERROR" %}
+        <div class="alert alert-success" role="alert">
+            Страны: {{movie['countries']}}
+        </div>
+    {% endif %}
+    {% if movie.get('fees', "ERROR") != "ERROR" %}
+        <div class="alert alert-success" role="alert">
+            Сборы в мире: {{movie['fees']}}
+        </div>
+    {% endif %}
+    {% if movie.get('releaseYears', "ERROR") != "ERROR" %}
+        <div class="alert alert-success" role="alert">
+            Премьера в мире: {{movie['releaseYears']['start']}}
+        </div>
+    {% endif %}
+    {% if movie.get('description', "ERROR") != "ERROR" %}
+    <p>
+        {{movie['description']}}
+    </p>
+    {% endif %}
+</div>
+<h2>Отзывы на фильмы</h2>
+{% for item in reviews%}
+    <div class="col-md6 border rounded">
+        <h3>{{item.title}}</h3>
+        <div>
+            {{item.content}}
+        </div>
+        <div>
+            Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+        </div>
+        {% if current_user.is_authenticated and current_user == item.user %}
+            <div>
+                <a href="/reviews/{{ item.id }}" class="btn btn-warning">
+                    Изменить
+                </a>
+                <a href="/reviews_delete/{{ item.id }}" class="btn btn-danger">
+                    Удалить
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}
+{% if current_user.is_authenticated %}
+    <a href="reviews/{{movie['name']}}" class="btn btn-secondary">Добавить отзыв</a>
+{% endif %}
+{% endblock %}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, abort, request, jsonify, make_response, session
+from flask import Flask, render_template, redirect, abort, request, jsonify, make_response, session, url_for
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import requests
 from data import db_session
@@ -127,7 +127,29 @@ def add_reviews():
         db_sess.commit()
         return redirect('/')
     return render_template('reviews.html', title='Добавление отзыва',
-                           form=form)
+                           form=form, header='Добавление',
+                           css_file=f"{url_for('static', filename='css/rating_for_review.css')}")
+
+
+@app.route('/movie_info/reviews/<username>', methods=['GET', 'POST'])
+@login_required
+def movie_add_reviews(username):
+    form = ReviewsForm()
+    if request.method == "GET":
+        form.title.data = username
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        reviews = Reviews()
+        reviews.title = form.title.data
+        reviews.content = form.content.data
+        reviews.is_private = form.is_private.data
+        current_user.reviews.append(reviews)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect(f'/movie_info/{username}')
+    return render_template('reviews.html', title='Добавление отзыва',
+                           form=form, header='Добавление',
+                           css_file=f"{url_for('static', filename='css/rating_for_review.css')}")
 
 
 @app.route('/reviews/<int:id>', methods=['GET', 'POST'])
@@ -159,7 +181,8 @@ def edit_reviews(id):
             abort(404)
     return render_template('reviews.html',
                            title='Редактирование отзыва',
-                           form=form)
+                           form=form, header='Редактирование',
+                           css_file=f"{url_for('static', filename='css/rating_for_review.css')}")
 
 
 @app.route('/reviews_delete/<int:id>', methods=['GET', 'POST'])
@@ -189,13 +212,28 @@ def search_movie():
             search_on = True
             name_film = request.args.getlist('input_search')[0]
             if name_film != '':
-                print(request.args.getlist('input_search')[0])
                 movies = search_movie_api(name_film)
-                for movie in movies:
-                    for elem in movie.keys():
-                        print(f'{elem}: {movie[elem]}')
+                # for movie in movies:
+                #     for elem in movie.keys():
+                #          print(f'{elem}: {movie[elem]}')
     return render_template('search_movie.html', title='Поиск фильмов', movie_form=movie_form, search_on=search_on,
                            select_fields=select_fields, movies=movies)
+
+
+@app.route('/movie_info/<movie_name>', methods=['GET', 'POST'])
+def movie_info(movie_name):
+    select_fields = ['name', 'id', 'rating', 'year', 'slogan', 'persones', 'genres', 'fees', 'premiere', 'description',
+                    'logo', 'poster', 'video', 'releaseYears']
+    movie = None
+    reviews = None
+    if request.method == 'GET':
+        if movie_name != '':
+            movie = search_movie_api(movie_name)[0]
+            db_sess = db_session.create_session()
+            reviews = db_sess.query(Reviews).filter(Reviews.title == movie_name).all()
+            print(reviews)
+    return render_template('movie_info.html', title=f'{movie_name}',
+                           select_fields=select_fields, movie=movie, reviews=reviews)
 
 
 def search_movie_api(name_movie):

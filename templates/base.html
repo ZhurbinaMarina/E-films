@@ -9,6 +9,7 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
           crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ css_file }}"/>
+    <link href="{url_for('static', filename='css/style.css')}" rel="stylesheet">
     <title>{{title}}</title>
     {% block connecting_scripts %}{% endblock %}
 </head>
