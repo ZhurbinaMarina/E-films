@@ -4,7 +4,7 @@ import requests
 from data import db_session
 from data.users import User
 from data.reviews import Reviews
-from forms.user_form import RegisterForm, LoginForm, SearchMovieForm
+from forms.user_form import RegisterForm, LoginForm, SearchMovieForm, EditingProfileForm
 from forms.reviews_form import ReviewsForm
 
 app = Flask(__name__)
@@ -37,7 +37,7 @@ def main_page():
     else:
         reviews = db_sess.query(Reviews).filter(Reviews.is_private != True)
 
-    return render_template("index.html", reviews=reviews, title='Efilms')
+    return render_template("index.html", reviews=reviews, title='E-films')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -72,6 +72,44 @@ def login():
                                message="Неправильный логин или пароль",
                                form=form)
     return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/editing', methods=['GET', 'POST'])
+def editing():
+    form = EditingProfileForm()
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.id == current_user.id).first()
+        if user:
+            form.name.data = user.name
+            form.email.data = user.email
+            form.about.data = user.about
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.id == current_user.id).first()
+        if request.form.get('_checkBox'):
+            if not user.check_password(form.old_password.data):
+                return render_template('editing.html', title='Редактирование профиля',
+                                       form=form,
+                                       message="Неверный пароль")
+            if form.old_password.data == form.new_password.data:
+                return render_template('editing.html', title='Редактирование профиля',
+                                       form=form,
+                                       message="Новый пароль совпадает со старым")
+        if user:
+            user.email = form.email.data
+            user.about = form.about.data
+            if request.form.get('_checkBox'):
+                user.set_password(form.new_password.data)
+            if form.name.data is not None:
+                user.name = form.name.data
+            db_sess.commit()
+            return redirect('/')
+        else:
+            abort(404)
+    return render_template('editing.html', title='Редактирование профиля', form=form)
 
 
 @app.route('/reviews', methods=['GET', 'POST'])

@@ -21,6 +21,15 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Войти')
 
 
+class EditingProfileForm(FlaskForm):
+    name = StringField('Имя пользователя', validators=[DataRequired()])
+    email = EmailField('Почта', validators=[DataRequired()])
+    old_password = PasswordField('Старый Пароль')
+    new_password = PasswordField('Новый Пароль')
+    about = TextAreaField("Немного о себе")
+    submit = SubmitField('Редактировать')
+
+
 class SearchMovieForm(FlaskForm):
     input_search = StringField(validators=[DataRequired()])
     submit = SubmitField('Поиск')
