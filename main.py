@@ -112,10 +112,13 @@ def editing():
     return render_template('editing.html', title='Редактирование профиля', form=form)
 
 
-@app.route('/reviews', methods=['GET', 'POST'])
+@app.route('/reviews/<page_title>', methods=['GET', 'POST'])
 @login_required
-def add_reviews():
+def add_reviews(page_title):
     form = ReviewsForm()
+    if page_title != 'index':
+        if request.method == "GET":
+            form.title.data = page_title
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         reviews = Reviews()
@@ -125,41 +128,23 @@ def add_reviews():
         current_user.reviews.append(reviews)
         db_sess.merge(current_user)
         db_sess.commit()
-        return redirect('/')
+        if page_title == 'index':
+            return redirect('/')
+        else:
+            return redirect(f'/movie_info/{page_title}')
     return render_template('reviews.html', title='Добавление отзыва',
                            form=form, header='Добавление',
                            css_file=f"{url_for('static', filename='css/rating_for_review.css')}")
 
 
-@app.route('/movie_info/reviews/<username>', methods=['GET', 'POST'])
+@app.route('/reviews/<page_title>/<int:id>', methods=['GET', 'POST'])
 @login_required
-def movie_add_reviews(username):
-    form = ReviewsForm()
-    if request.method == "GET":
-        form.title.data = username
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        reviews = Reviews()
-        reviews.title = form.title.data
-        reviews.content = form.content.data
-        reviews.is_private = form.is_private.data
-        current_user.reviews.append(reviews)
-        db_sess.merge(current_user)
-        db_sess.commit()
-        return redirect(f'/movie_info/{username}')
-    return render_template('reviews.html', title='Добавление отзыва',
-                           form=form, header='Добавление',
-                           css_file=f"{url_for('static', filename='css/rating_for_review.css')}")
-
-
-@app.route('/reviews/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_reviews(id):
+def edit_reviews(page_title, id):
     form = ReviewsForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
         reviews = db_sess.query(Reviews).filter(Reviews.id == id,
-                                          Reviews.user == current_user).first()
+                                                Reviews.user == current_user).first()
         if reviews:
             form.title.data = reviews.title
             form.content.data = reviews.content
@@ -169,14 +154,17 @@ def edit_reviews(id):
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         reviews = db_sess.query(Reviews).filter(Reviews.id == id,
-                                          Reviews.user == current_user
-                                          ).first()
+                                                Reviews.user == current_user
+                                                ).first()
         if reviews:
             reviews.title = form.title.data
             reviews.content = form.content.data
             reviews.is_private = form.is_private.data
             db_sess.commit()
-            return redirect('/')
+            if page_title == 'index':
+                return redirect('/')
+            else:
+                return redirect(f'/movie_info/{page_title}')
         else:
             abort(404)
     return render_template('reviews.html',
@@ -185,19 +173,22 @@ def edit_reviews(id):
                            css_file=f"{url_for('static', filename='css/rating_for_review.css')}")
 
 
-@app.route('/reviews_delete/<int:id>', methods=['GET', 'POST'])
+@app.route('/reviews_delete/<page_title>/<int:id>', methods=['GET', 'POST'])
 @login_required
-def reviews_delete(id):
+def reviews_delete(page_title, id):
     db_sess = db_session.create_session()
     reviews = db_sess.query(Reviews).filter(Reviews.id == id,
-                                      Reviews.user == current_user
-                                      ).first()
+                                            Reviews.user == current_user
+                                            ).first()
     if reviews:
         db_sess.delete(reviews)
         db_sess.commit()
     else:
         abort(404)
-    return redirect('/')
+    if page_title == 'index':
+        return redirect('/')
+    else:
+        return redirect(f'/movie_info/{page_title}')
 
 
 @app.route('/search_movie', methods=['GET', 'POST'])
@@ -205,7 +196,7 @@ def search_movie():
     movie_form = SearchMovieForm()
     search_on = False
     select_fields = ['name', 'id', 'rating', 'year', 'slogan', 'persones', 'genres', 'fees', 'premiere', 'description',
-                    'logo', 'poster', 'video', 'releaseYears']
+                     'logo', 'poster', 'video', 'releaseYears']
     movies = []
     if request.method == 'GET':
         if request.args.getlist('input_search') != []:
@@ -223,7 +214,7 @@ def search_movie():
 @app.route('/movie_info/<movie_name>', methods=['GET', 'POST'])
 def movie_info(movie_name):
     select_fields = ['name', 'id', 'rating', 'year', 'slogan', 'persones', 'genres', 'fees', 'premiere', 'description',
-                    'logo', 'poster', 'video', 'releaseYears']
+                     'logo', 'poster', 'video', 'releaseYears']
     movie = None
     reviews = None
     if request.method == 'GET':
@@ -239,7 +230,7 @@ def movie_info(movie_name):
 def search_movie_api(name_movie):
     TOKEN = "K93Q796-7QDMZ0T-GE8GE19-979AGST"
     file = requests.get(
-            f"https://api.kinopoisk.dev/v1/movie?token={TOKEN}&name={name_movie}").json()
+        f"https://api.kinopoisk.dev/v1/movie?token={TOKEN}&name={name_movie}").json()
     movies = file['docs']
     for movie in movies:
         if 'genres' in movie.keys():
@@ -257,15 +248,6 @@ def search_movie_api(name_movie):
             edited_countries = ', '.join(edited_countries)
             movie['countries'] = edited_countries
     return movies
-
-
-def main():
-    db_session.global_init("db/blogs.db")
-    app.run(port=8080, host='127.0.0.1')  # port=8080, host='127.0.0.1'
-    db_sess = db_session.create_session()
-
-    # for user in db_sess.query(User).filter((User.id > 1) | (User.email.notilike("%1%"))):
-    #     print(user)
 
 
 @app.errorhandler(404)
@@ -289,6 +271,11 @@ def add_user(email, password, name=None, about=None):
         user.about = about
     db_sess.add(user)
     db_sess.commit()
+
+
+def main():
+    db_session.global_init("db/blogs.db")
+    app.run(port=8080, host='127.0.0.1')  # port=8080, host='127.0.0.1'
 
 
 if __name__ == '__main__':

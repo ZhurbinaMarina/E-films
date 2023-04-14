@@ -73,10 +73,10 @@
         </div>
         {% if current_user.is_authenticated and current_user == item.user %}
             <div>
-                <a href="/reviews/{{ item.id }}" class="btn btn-warning">
+                <a href="/reviews/{{movie['name']}}/{{ item.id }}" class="btn btn-warning">
                     Изменить
                 </a>
-                <a href="/reviews_delete/{{ item.id }}" class="btn btn-danger">
+                <a href="/reviews_delete/{{movie['name']}}/{{ item.id }}" class="btn btn-danger">
                     Удалить
                 </a>
             </div>
@@ -84,6 +84,6 @@
     </div>
 {% endfor %}
 {% if current_user.is_authenticated %}
-    <a href="reviews/{{movie['name']}}" class="btn btn-secondary">Добавить отзыв</a>
+    <a href="/reviews/{{movie['name']}}" class="btn btn-secondary">Добавить отзыв</a>
 {% endif %}
 {% endblock %}
