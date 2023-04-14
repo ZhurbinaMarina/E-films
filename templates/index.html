@@ -3,12 +3,12 @@
 {% block content %}
 <h1>Отзывы на фильмы</h1>
 {% for item in reviews%}
-    <div class="col-md6 border rounded">
-        <h2>{{item.title}}</h2>
-        <div>
+    <div class="col-md6 border rounded" style="margin-top: 10px; margin-bottom: 10px;">
+        <h2 style="margin-left: 5px;"><a href="/movie_info/{{item.title}}" style="color: black;"> {{item.title}} </a></h2>
+        <div style="margin-left: 5px;">
             {{item.content}}
         </div>
-        <div class="rating-mini">
+        <div class="rating-mini" style="margin-left: 5px;">
             {% for i in range(item.rating) %}
                 <span class="active"></span>
             {% endfor %}
@@ -16,12 +16,12 @@
                 <span></span>
             {% endfor %}
         </div>
-        <div>
+        <div style="margin-bottom: 10px; margin-left: 5px;">
             Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
         </div>
         {% if current_user.is_authenticated and current_user == item.user %}
-            <div>
-                <a href="/reviews/index/{{ item.id }}" class="btn btn-warning">
+            <div style="margin-left: 5px; margin-bottom: 5px;">
+                <a href="/reviews/index/{{ item.id }}" class="btn btn-warning" style="margin-left: 5px;">
                     Изменить
                 </a>
                 <a href="/reviews_delete/index/{{ item.id }}" class="btn btn-danger">

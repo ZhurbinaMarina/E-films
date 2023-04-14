@@ -63,12 +63,12 @@
 </div>
 <h2>Отзывы на фильмы</h2>
 {% for item in reviews%}
-    <div class="col-md6 border rounded">
-        <h3>{{item.title}}</h3>
-        <div>
+    <div class="col-md6 border rounded" style="margin-top: 10px; margin-bottom: 10px;">
+        <h3 style="margin-left: 5px;">{{item.title}}</h3>
+        <div style="margin-left: 5px;">
             {{item.content}}
         </div>
-        <div class="rating-mini">
+        <div class="rating-mini" style="margin-left: 5px;">
             {% for i in range(item.rating) %}
                 <span class="active"></span>
             {% endfor %}
@@ -76,11 +76,11 @@
                 <span></span>
             {% endfor %}
         </div>
-        <div>
+        <div style="margin-bottom: 10px; margin-left: 5px;">
             Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
         </div>
         {% if current_user.is_authenticated and current_user == item.user %}
-            <div>
+            <div style="margin-left: 5px; margin-bottom: 5px;">
                 <a href="/reviews/{{movie['name']}}/{{ item.id }}" class="btn btn-warning">
                     Изменить
                 </a>
