@@ -61,7 +61,13 @@
     </p>
     {% endif %}
 </div>
+{% if current_user.is_authenticated %}
+    <a href="/reviews/{{movie['name']}}" class="btn btn-secondary">Добавить отзыв</a>
+{% endif %}
 <h2>Отзывы на фильмы</h2>
+{% if reviews == [] %}
+    <h4>Пока что нет отзывов на этот фильм :(</h4>
+{% endif %}
 {% for item in reviews%}
     <div class="col-md6 border rounded" style="margin-top: 10px; margin-bottom: 10px;">
         <h3 style="margin-left: 5px;">{{item.title}}</h3>
@@ -91,7 +97,4 @@
         {% endif %}
     </div>
 {% endfor %}
-{% if current_user.is_authenticated %}
-    <a href="/reviews/{{movie['name']}}" class="btn btn-secondary">Добавить отзыв</a>
-{% endif %}
 {% endblock %}

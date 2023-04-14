@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired
 
 
 class ReviewsForm(FlaskForm):
-    title = StringField('Название фильма', validators=[DataRequired()])
+    title = StringField('Название фильма')
     content = TextAreaField("Содержание отзыва")
     is_private = BooleanField("Личное")
     submit = SubmitField('Применить')

@@ -17,6 +17,7 @@ class Reviews(SqlAlchemyBase, SerializerMixin):
                                      default=datetime.datetime.now)
     is_private = sqlalchemy.Column(sqlalchemy.Boolean, default=True)
     rating = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+    genres = sqlalchemy.Column(sqlalchemy.String)
 
     user_id = sqlalchemy.Column(sqlalchemy.Integer,
                                 sqlalchemy.ForeignKey("users.id"))

@@ -14,7 +14,7 @@
     <h2 style="display: flex;">
         {% if movie.get('poster', "ERROR") != "ERROR" %}
             <img src="{{movie['poster']['url']}}"
-         alt="Постер фильма {{movie['name']}}" width="200" height="300" align="top"/>
+         alt="Постер фильма {{movie['name']}}" width="200" height="300" align="top" style="margin-right: 10px;"/>
         {% endif %}
         <a href="/movie_info/{{movie['name']}}" class="navbar-brand" style="color: black;">{{movie['name']}}</a>
     </h2>

@@ -2,6 +2,78 @@
 
 {% block content %}
 <h1>Отзывы на фильмы</h1>
+<div class="form-group btn btn-info">
+    <label for="sort_option">Отсортировать отзывы</label>
+    <select class="form-control" id="sort_option" name="sort_option" onchange="if (this.value) top.location.href=this.value;">
+        <option value="/">По дате публикации</option>
+
+        {% if sort_option == 'by_rating'%}
+            <option value="/index/by_rating" selected="selected">По рейтингу</option>
+        {% else%}
+            <option value="/index/by_rating">По рейтингу</option>
+        {% endif %}
+
+        {% if sort_option == 'cartoon'%}
+            <option value="/index/cartoon" selected="selected">Мультфильм</option>
+        {% else%}
+            <option value="/index/cartoon">Мультфильм</option>
+        {% endif %}
+
+        {% if sort_option == 'fantastic'%}
+            <option value="/index/fantastic" selected="selected">Фантастика</option>
+        {% else%}
+            <option value="/index/fantastic">Фантастика</option>
+        {% endif %}
+
+        {% if sort_option == 'action_movie'%}
+            <option value="/index/action_movie" selected="selected">Боевик</option>
+        {% else%}
+            <option value="/index/action_movie">Боевик</option>
+        {% endif %}
+
+        {% if sort_option == 'comedy'%}
+            <option value="/index/comedy" selected="selected">Комедия</option>
+        {% else%}
+            <option value="/index/comedy">Комедия</option>
+        {% endif %}
+
+        {% if sort_option == 'adventures'%}
+            <option value="/index/adventures" selected="selected">Приключения</option>
+        {% else%}
+            <option value="/index/adventures">Приключения</option>
+        {% endif %}
+
+        {% if sort_option == 'family'%}
+            <option value="/index/family" selected="selected">Семейный</option>
+        {% else%}
+            <option value="/index/family">Семейный</option>
+        {% endif %}
+
+        {% if sort_option == 'detective'%}
+            <option value="/index/detective" selected="selected">Детектив</option>
+        {% else%}
+            <option value="/index/detective">Детектив</option>
+        {% endif %}
+
+        {% if sort_option == 'drama'%}
+            <option value="/index/drama" selected="selected">Драма</option>
+        {% else%}
+            <option value="/index/drama">Драма</option>
+        {% endif %}
+
+        {% if sort_option == 'melodrama'%}
+            <option value="/index/melodrama" selected="selected">Мелодрама</option>
+        {% else%}
+            <option value="/index/melodrama">Мелодрама</option>
+        {% endif %}
+
+        {% if sort_option == 'horror'%}
+            <option value="/index/horror" selected="selected">Ужасы</option>
+        {% else%}
+            <option value="/index/horror">Ужасы</option>
+        {% endif %}
+    </select>
+</div>
 {% for item in reviews%}
     <div class="col-md6 border rounded" style="margin-top: 10px; margin-bottom: 10px;">
         <h2 style="margin-left: 5px;"><a href="/movie_info/{{item.title}}" style="color: black;"> {{item.title}} </a></h2>
@@ -15,6 +87,9 @@
             {% for i in range(5 - item.rating) %}
                 <span></span>
             {% endfor %}
+        </div>
+        <div style="margin-bottom: 5px; margin-left: 5px;">
+            Жанры: {{item.genres}}
         </div>
         <div style="margin-bottom: 10px; margin-left: 5px;">
             Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
@@ -31,12 +106,4 @@
         {% endif %}
     </div>
 {% endfor %}
-{% if current_user.is_authenticated %}
-    <a href="/reviews/index" class="btn btn-secondary">Добавить отзыв</a>
-{% endif %}
-<!--{% if current_user.is_authenticated %}-->
-<!--    <h2>Привет, {{current_user.name}}</h2>-->
-<!--{% else %}-->
-<!--    <h2>Привет, гость</h2>-->
-<!--{% endif %}-->
 {% endblock %}

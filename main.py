@@ -28,17 +28,29 @@ def logout():
 
 
 @app.route("/")
-@app.route('/index')
-def main_page():
+@app.route('/index/<sort_option>')
+def main_page(sort_option=None):
+    options = {'cartoon': 'мультфильм', 'fantastic': 'фантастика', 'action_movie': 'боевик',
+               'comedy': 'комедия', 'adventures': 'приключения', 'family': 'семейный', 'detective': 'детектив',
+               'drama': 'драма', 'melodrama': 'мелодрама', 'horror': 'ужасы'}
     db_sess = db_session.create_session()
     if current_user.is_authenticated:
         reviews = db_sess.query(Reviews).filter(
             (Reviews.user == current_user) | (Reviews.is_private != True))
     else:
         reviews = db_sess.query(Reviews).filter(Reviews.is_private != True)
-
-    return render_template("index.html", reviews=reviews, title='E-films',
-                           css_file=f"{url_for('static', filename='css/rating_output.css')}")
+    sort_reviews = []
+    if sort_option == 'by_rating':
+        sort_reviews = sorted(reviews, key=lambda x: x.rating, reverse=True)
+    elif sort_option in options.keys():
+        for review in reviews:
+            if options[sort_option] in review.genres:
+                sort_reviews.append(review)
+    else:
+        sort_reviews = reviews[::-1]
+    return render_template("index.html", reviews=sort_reviews, title='E-films',
+                           css_file=f"{url_for('static', filename='css/rating_output.css')}",
+                           sort_option=sort_option)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -121,6 +133,25 @@ def add_reviews(page_title):
         if request.method == "GET":
             form.title.data = page_title
     if form.validate_on_submit():
+        movies = search_movie_api(form.title.data)
+        genres_movie = []
+        if movies == []:
+            return render_template('reviews.html', title='Добавление отзыва',
+                                   form=form, header='Добавление',
+                                   css_file=f"{url_for('static', filename='css/rating_setting.css')}",
+                                   message="Такого фильма не существует")
+        else:
+            flag = False
+            for movie in movies:
+                if movie['name'] == form.title.data:
+                    flag = True
+                    genres_movie = movie['genres']
+                    print(genres_movie)
+            if flag is False:
+                return render_template('reviews.html', title='Добавление отзыва',
+                                       form=form, header='Добавление',
+                                       css_file=f"{url_for('static', filename='css/rating_setting.css')}",
+                                       message="Такого фильма не существует")
         if 'rating' not in request.form:
             return render_template('reviews.html', title='Добавление отзыва',
                                    form=form, header='Добавление',
@@ -132,6 +163,7 @@ def add_reviews(page_title):
         reviews.content = form.content.data
         reviews.is_private = form.is_private.data
         reviews.rating = int(request.form['rating'])
+        reviews.genres = genres_movie
         current_user.reviews.append(reviews)
         db_sess.merge(current_user)
         db_sess.commit()
@@ -161,6 +193,22 @@ def edit_reviews(page_title, id):
         else:
             abort(404)
     if form.validate_on_submit():
+        movies = search_movie_api(form.title.data)
+        if movies == []:
+            return render_template('reviews.html', title='Добавление отзыва',
+                                   form=form, header='Добавление',
+                                   css_file=f"{url_for('static', filename='css/rating_setting.css')}",
+                                   message="Такого фильма не существует")
+        else:
+            flag = False
+            for movie in movies:
+                if movie['name'] == form.title.data:
+                    flag = True
+            if flag is False:
+                return render_template('reviews.html', title='Добавление отзыва',
+                                       form=form, header='Добавление',
+                                       css_file=f"{url_for('static', filename='css/rating_setting.css')}",
+                                       message="Такого фильма не существует")
         db_sess = db_session.create_session()
         reviews = db_sess.query(Reviews).filter(Reviews.id == id,
                                                 Reviews.user == current_user
