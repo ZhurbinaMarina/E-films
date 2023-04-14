@@ -37,7 +37,8 @@ def main_page():
     else:
         reviews = db_sess.query(Reviews).filter(Reviews.is_private != True)
 
-    return render_template("index.html", reviews=reviews, title='E-films')
+    return render_template("index.html", reviews=reviews, title='E-films',
+                           css_file=f"{url_for('static', filename='css/rating_output.css')}")
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -120,11 +121,17 @@ def add_reviews(page_title):
         if request.method == "GET":
             form.title.data = page_title
     if form.validate_on_submit():
+        if 'rating' not in request.form:
+            return render_template('reviews.html', title='Добавление отзыва',
+                                   form=form, header='Добавление',
+                                   css_file=f"{url_for('static', filename='css/rating_setting.css')}",
+                                   message="Поставьте рейтинг фильму")
         db_sess = db_session.create_session()
         reviews = Reviews()
         reviews.title = form.title.data
         reviews.content = form.content.data
         reviews.is_private = form.is_private.data
+        reviews.rating = int(request.form['rating'])
         current_user.reviews.append(reviews)
         db_sess.merge(current_user)
         db_sess.commit()
@@ -134,13 +141,14 @@ def add_reviews(page_title):
             return redirect(f'/movie_info/{page_title}')
     return render_template('reviews.html', title='Добавление отзыва',
                            form=form, header='Добавление',
-                           css_file=f"{url_for('static', filename='css/rating_for_review.css')}")
+                           css_file=f"{url_for('static', filename='css/rating_setting.css')}")
 
 
 @app.route('/reviews/<page_title>/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_reviews(page_title, id):
     form = ReviewsForm()
+    rating = None
     if request.method == "GET":
         db_sess = db_session.create_session()
         reviews = db_sess.query(Reviews).filter(Reviews.id == id,
@@ -149,6 +157,7 @@ def edit_reviews(page_title, id):
             form.title.data = reviews.title
             form.content.data = reviews.content
             form.is_private.data = reviews.is_private
+            rating = reviews.rating
         else:
             abort(404)
     if form.validate_on_submit():
@@ -156,10 +165,17 @@ def edit_reviews(page_title, id):
         reviews = db_sess.query(Reviews).filter(Reviews.id == id,
                                                 Reviews.user == current_user
                                                 ).first()
+        rating = reviews.rating
+        if 'rating' not in request.form:
+            return render_template('reviews.html', title='Добавление отзыва',
+                                   form=form, header='Добавление',
+                                   css_file=f"{url_for('static', filename='css/rating_setting.css')}",
+                                   message="Поставьте рейтинг фильму", rating=rating)
         if reviews:
             reviews.title = form.title.data
             reviews.content = form.content.data
             reviews.is_private = form.is_private.data
+            reviews.rating = int(request.form['rating'])
             db_sess.commit()
             if page_title == 'index':
                 return redirect('/')
@@ -170,7 +186,8 @@ def edit_reviews(page_title, id):
     return render_template('reviews.html',
                            title='Редактирование отзыва',
                            form=form, header='Редактирование',
-                           css_file=f"{url_for('static', filename='css/rating_for_review.css')}")
+                           css_file=f"{url_for('static', filename='css/rating_setting.css')}",
+                           rating=rating)
 
 
 @app.route('/reviews_delete/<page_title>/<int:id>', methods=['GET', 'POST'])
@@ -222,9 +239,9 @@ def movie_info(movie_name):
             movie = search_movie_api(movie_name)[0]
             db_sess = db_session.create_session()
             reviews = db_sess.query(Reviews).filter(Reviews.title == movie_name).all()
-            print(reviews)
     return render_template('movie_info.html', title=f'{movie_name}',
-                           select_fields=select_fields, movie=movie, reviews=reviews)
+                           select_fields=select_fields, movie=movie, reviews=reviews,
+                           css_file=f"{url_for('static', filename='css/rating_output.css')}")
 
 
 def search_movie_api(name_movie):

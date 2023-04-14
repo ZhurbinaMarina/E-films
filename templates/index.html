@@ -8,6 +8,14 @@
         <div>
             {{item.content}}
         </div>
+        <div class="rating-mini">
+            {% for i in range(item.rating) %}
+                <span class="active"></span>
+            {% endfor %}
+            {% for i in range(5 - item.rating) %}
+                <span></span>
+            {% endfor %}
+        </div>
         <div>
             Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
         </div>

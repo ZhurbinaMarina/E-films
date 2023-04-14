@@ -24,18 +24,43 @@
     </p>
     <p>{{ form.is_private() }} {{ form.is_private.label }}</p>
     <div class="rating-area">
-        <input type="radio" id="star-5" name="rating" value="5">
-        <label for="star-5" title="Оценка «5»"></label>
-        <input type="radio" id="star-4" name="rating" value="4">
+        {% if rating == 5 %}
+            <input type="radio" id="star-5_on" checked="checked" name="rating" value="5">
+            <label for="star-5" title="Оценка «5»"></label>
+        {% else %}
+            <input type="radio" id="star-5" name="rating" value="5">
+            <label for="star-5" title="Оценка «5»"></label>
+        {% endif %}
+        {% if rating == 4 %}
+            <input type="radio" id="star-4_on" checked="checked" name="rating" value="4">
         <label for="star-4" title="Оценка «4»"></label>
-        <input type="radio" id="star-3" name="rating" value="3">
-        <label for="star-3" title="Оценка «3»"></label>
-        <input type="radio" id="star-2" name="rating" value="2">
-        <label for="star-2" title="Оценка «2»"></label>
-        <input type="radio" id="star-1" name="rating" value="1">
-        <label for="star-1" title="Оценка «1»"></label>
+        {% else %}
+            <input type="radio" id="star-4" name="rating" value="4">
+            <label for="star-4" title="Оценка «4»"></label>
+        {% endif %}
+        {% if rating == 3 %}
+            <input type="radio" id="star-3_on" checked="checked" name="rating" value="3">
+            <label for="star-3" title="Оценка «3»"></label>
+        {% else %}
+            <input type="radio" id="star-3" name="rating" value="3">
+            <label for="star-3" title="Оценка «3»"></label>
+        {% endif %}
+        {% if rating == 2 %}
+            <input type="radio" id="star-2_on" checked="checked" name="rating" value="2">
+            <label for="star-2" title="Оценка «2»"></label>
+        {% else %}
+            <input type="radio" id="star-2" name="rating" value="2">
+            <label for="star-2" title="Оценка «2»"></label>
+        {% endif %}
+        {% if rating == 1 %}
+            <input type="radio" id="star-1_on" checked="checked" name="rating" value="1">
+            <label for="star-1" title="Оценка «1»"></label>
+        {% else %}
+            <input type="radio" id="star-1" name="rating" value="1">
+            <label for="star-1" title="Оценка «1»"></label>
+        {% endif %}
     </div>
+    <p class="text-danger">{{ message }}</p>
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-    {{message}}
 </form>
 {% endblock %}
