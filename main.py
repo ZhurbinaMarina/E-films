@@ -6,6 +6,7 @@ from data.users import User
 from data.reviews import Reviews
 from forms.user_form import RegisterForm, LoginForm, SearchMovieForm, EditingProfileForm
 from forms.reviews_form import ReviewsForm
+from config import KINOPOISK_API_TOKEN
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -293,9 +294,8 @@ def movie_info(movie_name):
 
 
 def search_movie_api(name_movie):
-    TOKEN = "K93Q796-7QDMZ0T-GE8GE19-979AGST"
     file = requests.get(
-        f"https://api.kinopoisk.dev/v1/movie?token={TOKEN}&name={name_movie}").json()
+        f"https://api.kinopoisk.dev/v1/movie?token={KINOPOISK_API_TOKEN}&name={name_movie}").json()
     movies = file['docs']
     for movie in movies:
         if 'genres' in movie.keys():
