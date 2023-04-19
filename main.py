@@ -7,6 +7,7 @@ from data.reviews import Reviews
 from forms.user_form import RegisterForm, LoginForm, SearchMovieForm, EditingProfileForm
 from forms.reviews_form import ReviewsForm
 from config import KINOPOISK_API_TOKEN
+from test_bot import bot_main
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -338,10 +339,11 @@ def add_user(email, password, name=None, about=None):
     db_sess.commit()
 
 
-def main():
+def web_main():
     db_session.global_init("db/blogs.db")
     app.run(port=8080, host='127.0.0.1')  # port=8080, host='127.0.0.1'
 
 
 if __name__ == '__main__':
-    main()
+    web_main()
+    bot_main()

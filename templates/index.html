@@ -74,6 +74,9 @@
         {% endif %}
     </select>
 </div>
+{% if reviews == []%}
+    <h2>К сожалению, отзывов ещё нет</h2>
+{% endif %}
 {% for item in reviews%}
     <div class="col-md6 border rounded" style="margin-top: 10px; margin-bottom: 10px;">
         <h2 style="margin-left: 5px;"><a href="/movie_info/{{item.title}}" style="color: black;"> {{item.title}} </a></h2>
