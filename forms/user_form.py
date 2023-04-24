@@ -1,8 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField, TextAreaField, SubmitField, EmailField, BooleanField
 from wtforms.validators import DataRequired
-import requests
-import json
 
 
 class RegisterForm(FlaskForm):

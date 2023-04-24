@@ -342,8 +342,7 @@ def add_user(email, password, name=None, about=None):
 def web_main():
     db_session.global_init("db/blogs.db")
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)    # https://24a9-5-165-193-65.ngrok-free.app/
-    # app.run(port=8080, host='127.0.0.1')  # port=8080, host='127.0.0.1'
+    app.run(host='0.0.0.0', port=port)
 
 
 if __name__ == '__main__':
