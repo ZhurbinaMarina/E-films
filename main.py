@@ -1,13 +1,13 @@
 from flask import Flask, render_template, redirect, abort, request, jsonify, make_response, session, url_for
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import requests
+import os
 from data import db_session
 from data.users import User
 from data.reviews import Reviews
 from forms.user_form import RegisterForm, LoginForm, SearchMovieForm, EditingProfileForm
 from forms.reviews_form import ReviewsForm
 from config import KINOPOISK_API_TOKEN
-from test_bot import bot_main
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -341,9 +341,10 @@ def add_user(email, password, name=None, about=None):
 
 def web_main():
     db_session.global_init("db/blogs.db")
-    app.run(port=8080, host='127.0.0.1')  # port=8080, host='127.0.0.1'
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)    # https://24a9-5-165-193-65.ngrok-free.app/
+    # app.run(port=8080, host='127.0.0.1')  # port=8080, host='127.0.0.1'
 
 
 if __name__ == '__main__':
     web_main()
-    bot_main()
