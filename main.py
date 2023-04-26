@@ -56,20 +56,26 @@ def main_page(sort_option=None):
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def reqister():
+def register(): # Renamed `reqister` to register
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Пароли не совпадают")
-        db_sess = db_session.create_session()
-        if db_sess.query(User).filter(User.email == form.email.data).first():
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Такой пользователь уже есть")
-        add_user(form.email.data, form.password.data, form.name.data)
-        return redirect('/login')
+        try: # Added a try/except block to handle errors that might occur when calling add_user.
+            db_sess = db_session.create_session()
+            if db_sess.query(User).filter(User.email == form.email.data).first():
+                return render_template('register.html', title='Регистрация',
+                                    form=form,
+                                    message="Такой пользователь уже есть")
+            add_user(form.email.data, form.password.data, form.name.data)
+            db.sess.commit() # Added db_sess.commit() to commit changes made to the database and 
+            db.sess.close() # Closed the database session using db_sess.close() after committing or rolling back the transaction.
+            return redirect(url_for('login')) # Replaced the hardcoded redirect URL '/login' with the url_for function. This makes the redirect more flexible and less error-prone in case the route changes in the future.
+        except Exception as e:
+            db.sess.rollback() # db_sess.rollback() in case an error occurs.
+            db.sess.close()
     return render_template('register.html', title='Регистрация', form=form)
 
 
